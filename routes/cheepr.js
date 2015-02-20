@@ -2,14 +2,14 @@
 var path = require("path");
 var models = require(path.join(__dirname, "../models/models"));
 var authUser = models.authUser;
-var Cheep = models.Cheep;
+var Cheep = models.authCheep;
 
 var cheeprroutes = {};
 
 // Main page
 var home = function(req, res) {
-  console.dir(req.session.user);
   // find users
+  console.log(req.session.passport)
   authUser.find({}, '_id name')
     .sort({
       name: 1
@@ -28,11 +28,10 @@ var home = function(req, res) {
               res.status(500).send('Error gathering cheeps');
             } else {
               //find cheeps
-              console.log(users)
               res.render('home', {
                 cheeps: cheeps,
                 users: users,
-                currentuser: req.session.user
+                currentuser: req.user.name
               });
             }
           });

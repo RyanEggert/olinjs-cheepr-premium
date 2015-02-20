@@ -20,53 +20,6 @@ var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
 
-var models = require("./models/models");
-var authUser = models.authUser;
-
-// passport serialize and deserialize
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
-
-// passport config
-passport.use(new FacebookStrategy({
-    clientID: config.facebook.clientID,
-    clientSecret: config.facebook.clientSecret,
-    callbackURL: config.facebook.callbackURL
-  },
-  function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
-      return done(null, profile);
-    });
-  }
-));
-
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    authUser.findOrCreate({
-      'local.username': username
-    }, {
-      'local.password': password,
-      'name': username,
-    }, function(err, user) {
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        console.log('make new user')
-        users.makeuser(username, password);
-        return done(donereturn.err, donereturn.ret);
-      }
-      if (!user.verifyPassword(password)) {
-        return done(null, false);
-      }
-      return done(null, user);
-    });
-  }
-));
 
 
 // app creation & configuration
@@ -95,13 +48,70 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+var models = require("./models/models");
+var authUser = models.authUser;
 
+// passport config
+passport.use(new FacebookStrategy({
+    clientID: config.facebook.clientID,
+    clientSecret: config.facebook.clientSecret,
+    callbackURL: config.facebook.callbackURL
+  },
+  function(accessToken, refreshToken, profile, done) {
+    process.nextTick(function() {
+      return done(null, profile);
+    });
+  }
+));
+
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    authUser.findOrCreate({
+      'local.username': username
+    }, {
+      'local.password': password,
+      'name': username,
+    }, function(err, user) {
+      if (err) {
+        return done(err);
+      }
+      if (!user) {
+        users.makeuser(username, password);
+        return done(donereturn.err, donereturn.ret);
+      }
+      if (!user.verifyPassword(password)) {
+        return done(null, false);
+      }
+      return done(null, user);
+    });
+  }
+));
+
+var ensureAuthenticated = function(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+};
+
+// passport serialize and deserialize
+passport.serializeUser(function(user, done) {
+  console.log('Serializing user');
+  console.log(user);
+  done(null, {name:user.name, id:user._id});
+});
+passport.deserializeUser(function(obj, done) {
+   done(null, obj);
+});
 
 // routes
-app.get('/', cheeprs.home);
+app.get('/', ensureAuthenticated, cheeprs.home);
 
 app.get('/login', authrs.login);
-app.post('/logout', authrs.logout);
+app.post('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 
 app.post('/users/auth/local',
   passport.authenticate('local', {
@@ -136,12 +146,3 @@ mongoose.connect(mongoURI);
 app.listen(PORT, function() {
   console.log("Application running on port:", PORT);
 });
-
-// other functions
-// test authentication
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/');
-}

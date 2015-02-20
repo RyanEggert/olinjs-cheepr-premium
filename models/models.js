@@ -35,7 +35,7 @@ var cheepSchema = mongoose.Schema({
     default: Date.now
   }
 });
-models.Cheep = mongoose.model("Cheep", cheepSchema);
+models.authCheep = mongoose.model("authCheep", cheepSchema);
 
 
 module.exports = models;
