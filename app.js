@@ -38,7 +38,7 @@ var PORT = process.env.PORT || 3000;
 var mongoURI = process.env.MONGOURI || "mongodb://localhost/test";
 var fbclientID = process.env.FBCID || config.facebook.clientID;
 var fbclientsecret = process.env.FBCSR || config.facebook.clientSecret;
-var fbcallbackurl = 'http://localhost:3000/auth/facebook/callback';
+var fbcallbackurl = process.env.FBCBU || 'http://localhost:3000/auth/facebook/callback';
 
 app.engine("handlebars", exphbs({
   defaultLayout: "main"
