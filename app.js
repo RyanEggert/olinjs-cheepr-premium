@@ -74,9 +74,9 @@ passport.use(new FacebookStrategy({
     authUser.findOrCreate({
       'facebook.id': profile.id
     }, {
-      'facebook.name': profile.name.givenName,
+      'facebook.name': profile.name.displayName,
       'facebook.profilelink':profile.profileUrl,
-      'name': profile.name.givenName
+      'name': profile.name.displayName
     }, function(err, user) {
       if (err) {
         return done(err, user);
@@ -86,21 +86,6 @@ passport.use(new FacebookStrategy({
     });
   });
 }));
-
-// function(accessToken, refreshToken, profile, done) {
-//   authUser.findOrCreate({
-//     'facebook.id': profile.id
-//   }, {
-//     'facebook.email': profile.email,
-//     'facebook.name': profile.name,
-//     'name': profile.name
-//   }, function(err, user) {
-//     if (err) {
-//       return done(err, user);
-//     }
-//   });
-// }
-// ));
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
@@ -117,7 +102,7 @@ passport.use(new LocalStrategy(
         users.makeuser(username, password);
         return done(donereturn.err, donereturn.ret);
       }
-      if (!user.verifyPassword(password)) {
+      if (!user.verifyPassword(password, user)) {
         return done(null, false);
       }
       return done(null, user);

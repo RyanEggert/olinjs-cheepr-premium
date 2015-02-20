@@ -17,8 +17,12 @@ var userSchema = mongoose.Schema({
     name: String
   }
 });
-userSchema.methods.verifyPassword = function(password) {
-  return true;
+userSchema.methods.verifyPassword = function(password, user) {
+  if (user.local.password === password) {
+    return true;
+  } else {
+    return false;
+  }
 };
 userSchema.plugin(supergoose);
 

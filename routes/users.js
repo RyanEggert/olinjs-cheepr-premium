@@ -17,29 +17,6 @@ var login = function(req, res) {
 };
 userroutes.login = newuser;
 
-// var makeuser = function(username, password) {
-//   console.log('new user maker')
-//   var newuser = new authUser();
-//   newuser.local.username = username;
-//   newuser.local.password = password;
-//   doner = newuser.save(function(err, user) {
-//     console.log('save callback')
-//     var donereturn = {};
-//     if (err) {
-//       console.log('Error saving new user.');
-//       donereturn.err = err;
-//       donereturn.ret = null;
-//       console.log(typeof(donereturn));
-//     } else {
-//       donereturn.err = null;
-//       donereturn.ret = user;
-//       console.log(typeof(donereturn));
-//     }
-//     return donereturn;
-//   });
-//   return doner;
-// };
-
 
 // userroutes.makeuser = makeuser;
 
