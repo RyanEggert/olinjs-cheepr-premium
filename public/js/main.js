@@ -58,7 +58,7 @@ var highlightcheeps = function(event) {
   // unhighlight all cheeps
   $("div.cheep").css('background-color', 'rgb(130, 150, 200)');
   // highlight user's cheeps
-  $("div.cheep[user=" + $(this).attr('user') + "]").css('background-color', 'yellow');
+  $("div.cheep[uid=" + $(this).attr('uid') + "]").css('background-color', 'yellow');
 };
 
 var unhighlightcheeps = function(event) {

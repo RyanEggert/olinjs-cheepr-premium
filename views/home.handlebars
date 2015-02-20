@@ -11,7 +11,7 @@
 
       {{#each cheeps}}
       <div class="cheep" user="{{this.username}}" id="{{this._id}}" uid="{{this.userid}}">
-        <b>{{this.username}} said... </b> <button type="button" class="delete" id="{{this._id}}"user="{{this.username}}">Delete</button>
+        <b>{{this.username}} said... </b> <button type="button" class="delete" id="{{this._id}}"user="{{this.username}}" uid="{{this.userid}}">Delete</button>
         <p>{{this.words}}</p>
       </div>
       {{/each}}
@@ -20,7 +20,7 @@
     <div id="users">
       {{#each users}}
       <div class="user" user="{{this.name}}" uid="{{this._id}}">
-        <div class="usernamedisp" user="{{this.name}}"><b>{{this.name}}</b></div>
+        <div class="usernamedisp" user="{{this.name}}" uid="{{this._id}}"><b>{{this.name}}</b></div>
       </div>
       {{/each}}
       <div class="user clhl" user="{{this.name}}">
