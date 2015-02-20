@@ -12,14 +12,14 @@ var session = require('express-session');
 var mongoose = require("mongoose");
 
 var module_exists = function(name) {
-    try {
-      var modloc = require.resolve(name);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-  // internal requirements
+  try {
+    var modloc = require.resolve(name);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+// internal requirements
 var cheeprs = require("./routes/cheepr");
 var users = require("./routes/users");
 var authrs = require("./routes/auth");
@@ -66,16 +66,41 @@ var authUser = models.authUser;
 
 // passport config
 passport.use(new FacebookStrategy({
-    clientID: fbclientID,
-    clientSecret: fbclientsecret,
-    callbackURL: fbcallbackurl
-  },
-  function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
-      return done(null, profile);
+  clientID: fbclientID,
+  clientSecret: fbclientsecret,
+  callbackURL: fbcallbackurl
+}, function(accessToken, refreshToken, profile, done) {
+  process.nextTick(function() {
+    authUser.findOrCreate({
+      'facebook.id': profile.id
+    }, {
+      'facebook.name': profile.name.givenName,
+      'facebook.profilelink':profile.profileUrl,
+      'name': profile.name.givenName
+    }, function(err, user) {
+      if (err) {
+        return done(err, user);
+      } else {
+        return done(null, user);
+      }
     });
-  }
-));
+  });
+}));
+
+// function(accessToken, refreshToken, profile, done) {
+//   authUser.findOrCreate({
+//     'facebook.id': profile.id
+//   }, {
+//     'facebook.email': profile.email,
+//     'facebook.name': profile.name,
+//     'name': profile.name
+//   }, function(err, user) {
+//     if (err) {
+//       return done(err, user);
+//     }
+//   });
+// }
+// ));
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
@@ -109,8 +134,6 @@ var ensureAuthenticated = function(req, res, next) {
 
 // passport serialize and deserialize
 passport.serializeUser(function(user, done) {
-  console.log('Serializing user');
-  console.log(user);
   done(null, {
     name: user.name,
     id: user._id
@@ -142,8 +165,14 @@ app.delete('/cheep/delete/', cheeprs.delete);
 
 
 app.get('/auth/facebook',
-  passport.authenticate('facebook'),
-  function(req, res) {});
+  passport.authenticate('facebook', {
+    failureRedirect: '/login'
+  }),
+  function(req, res) {
+    res.redirect('/');
+  });
+
+
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
     failureRedirect: '/'

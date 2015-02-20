@@ -4,13 +4,13 @@
     <div id= "feed">
       <div class = "cheep newcheep">
         <form id="newcheep">
-          <textarea name="in_cheep" id="in_cheep" placeholder="Say something cheep, {{currentuser}}..." autofocus></textarea>
+          <textarea name="in_cheep" id="in_cheep" placeholder="Say something cheep, {{currentuser.name}}..." uid="{{currentuser._id}}" autofocus></textarea>
           <div id="buttondiv"><button class="send" type="submit" id="cheepbutton">Cheep!</button></div>
         </form>
       </div>
 
       {{#each cheeps}}
-      <div class="cheep" user="{{this.username}}" id="{{this._id}}">
+      <div class="cheep" user="{{this.username}}" id="{{this._id}}" uid="{{this.userid}}">
         <b>{{this.username}} said... </b> <button type="button" class="delete" id="{{this._id}}"user="{{this.username}}">Delete</button>
         <p>{{this.words}}</p>
       </div>
@@ -19,7 +19,7 @@
 
     <div id="users">
       {{#each users}}
-      <div class="user" user="{{this.name}}">
+      <div class="user" user="{{this.name}}" uid="{{this._id}}">
         <div class="usernamedisp" user="{{this.name}}"><b>{{this.name}}</b></div>
       </div>
       {{/each}}

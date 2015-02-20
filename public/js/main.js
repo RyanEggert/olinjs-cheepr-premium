@@ -13,6 +13,8 @@ var currentuser = $('nav').attr("user");
 if (currentuser === "") {
   currentuser = "None";
 }
+var currentuserid = $('nav').attr("uid");
+
 
 //Event Callback Funtions
 var shownewtweet = function(data, status) {
@@ -110,8 +112,8 @@ $("nav li#signout").on("click", logouthandler);
 // User Functions
 
 // hide delete buttons
-var yourdeletebuttons = function(username) {
-  var searchstring = "button.delete:not([user=" + username + "])";
+var yourdeletebuttons = function(uid) {
+  var searchstring = "button.delete:not([uid=" + uid + "])";
   $(searchstring).hide();
 };
 
@@ -131,6 +133,6 @@ var canyouso = function(username) {
   }
 };
 
-yourdeletebuttons(currentuser);
+yourdeletebuttons(currentuserid);
 canyoucheep(currentuser);
 canyouso(currentuser);

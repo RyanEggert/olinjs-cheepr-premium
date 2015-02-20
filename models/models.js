@@ -13,8 +13,7 @@ var userSchema = mongoose.Schema({
   },
   facebook: {
     id: String,
-    token: String,
-    email: String,
+    profilelink: String,
     name: String
   }
 });
@@ -29,6 +28,7 @@ models.authUser = mongoose.model("authUser", userSchema);
 
 var cheepSchema = mongoose.Schema({
   username: String,
+  userid: String,
   words: String,
   date: {
     type: Date,

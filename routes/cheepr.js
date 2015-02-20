@@ -9,7 +9,6 @@ var cheeprroutes = {};
 // Main page
 var home = function(req, res) {
   // find users
-  console.log(req.session.passport)
   authUser.find({}, '_id name')
     .sort({
       name: 1
@@ -31,7 +30,7 @@ var home = function(req, res) {
               res.render('home', {
                 cheeps: cheeps,
                 users: users,
-                currentuser: req.user.name
+                currentuser: {name:req.user.name, _id:req.user._id}
               });
             }
           });
@@ -45,10 +44,12 @@ cheeprroutes.home = home;
 var makenewcheep = function(req, res) {
   var in_text = req.body.words;
   var in_name = req.user.name;
+  var in_id = req.user._id;
   //make new cheep in db
   var newCheep = new Cheep({
     words: in_text,
-    username: in_name
+    username: in_name,
+    userid: in_id
   });
   newCheep.save(function(err, newcheep) {
     if (err) {
