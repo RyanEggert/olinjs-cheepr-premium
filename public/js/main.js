@@ -20,7 +20,7 @@ var currentuserid = $('nav').attr("uid");
 var shownewtweet = function(data, status) {
   $('div.newcheep').after(data);
   $newcheepin.find('#in_cheep').val('');
-  yourdeletebuttons(currentuser);
+  yourdeletebuttons(currentuserid);
 };
 
 var hideoldtweet = function(data, status) {
@@ -34,7 +34,6 @@ var homepage = function(data, status) {
 var onError = function(data, status) {
   console.error(data);
 };
-
 
 var deletehandler = function(event) {
   event.preventDefault();

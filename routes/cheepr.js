@@ -26,11 +26,13 @@ var home = function(req, res) {
             if (err) {
               res.status(500).send('Error gathering cheeps');
             } else {
-              //find cheeps
               res.render('home', {
                 cheeps: cheeps,
                 users: users,
-                currentuser: {name:req.user.name, _id:req.user._id}
+                currentuser: {
+                  name: req.user.name,
+                  _id: req.user.id
+                }
               });
             }
           });
@@ -44,7 +46,7 @@ cheeprroutes.home = home;
 var makenewcheep = function(req, res) {
   var in_text = req.body.words;
   var in_name = req.user.name;
-  var in_id = req.user._id;
+  var in_id = req.user.id;
   //make new cheep in db
   var newCheep = new Cheep({
     words: in_text,

@@ -19,6 +19,7 @@ var module_exists = function(name) {
     return false;
   }
 };
+
 // internal requirements
 var cheeprs = require("./routes/cheepr");
 var users = require("./routes/users");
@@ -29,8 +30,6 @@ if (module_exists('./oauth.js')) {
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
-
-
 
 // app creation & configuration
 var app = express();
@@ -74,9 +73,9 @@ passport.use(new FacebookStrategy({
     authUser.findOrCreate({
       'facebook.id': profile.id
     }, {
-      'facebook.name': profile.name.displayName,
-      'facebook.profilelink':profile.profileUrl,
-      'name': profile.name.displayName
+      'facebook.name': profile.displayName,
+      'facebook.profilelink': profile.profileUrl,
+      'name': profile.displayName
     }, function(err, user) {
       if (err) {
         return done(err, user);
@@ -144,19 +143,21 @@ app.post('/users/auth/local',
   function(req, res) {
     res.redirect('/');
   });
+
+
 app.post('/users/new/', users.new);
+
 app.post('/cheep/new/', cheeprs.new);
 app.delete('/cheep/delete/', cheeprs.delete);
 
 
-app.get('/auth/facebook',
+app.get('/auth/facebook/',
   passport.authenticate('facebook', {
     failureRedirect: '/login'
   }),
   function(req, res) {
     res.redirect('/');
   });
-
 
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
@@ -165,12 +166,6 @@ app.get('/auth/facebook/callback',
   function(req, res) {
     res.redirect('/');
   });
-app.get('/logout', function(req, res) {
-  req.logout();
-  res.redirect('/');
-});
-
-
 // connections
 mongoose.connect(mongoURI);
 app.listen(PORT, function() {
