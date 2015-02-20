@@ -11,11 +11,21 @@ var exphbs = require("express-handlebars");
 var session = require('express-session');
 var mongoose = require("mongoose");
 
-// internal requirements
+var module_exists = function(name) {
+    try {
+      var modloc = require.resolve(name);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+  // internal requirements
 var cheeprs = require("./routes/cheepr");
 var users = require("./routes/users");
 var authrs = require("./routes/auth");
-var config = require('./oauth.js');
+if (module_exists('./oauth.js')) {
+  var config = require('./oauth.js');
+}
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
@@ -27,6 +37,9 @@ var app = express();
 
 var PORT = process.env.PORT || 3000;
 var mongoURI = process.env.MONGOURI || "mongodb://localhost/test";
+var fbclientID = process.env.FBCID || config.facebook.clientID;
+var fbclientsecret = process.env.FBCSR || config.facebook.clientSecret;
+var fbcallbackurl = 'http://localhost:3000/auth/facebook/callback';
 
 app.engine("handlebars", exphbs({
   defaultLayout: "main"
@@ -53,9 +66,9 @@ var authUser = models.authUser;
 
 // passport config
 passport.use(new FacebookStrategy({
-    clientID: config.facebook.clientID,
-    clientSecret: config.facebook.clientSecret,
-    callbackURL: config.facebook.callbackURL
+    clientID: fbclientID,
+    clientSecret: fbclientsecret,
+    callbackURL: fbcallbackurl
   },
   function(accessToken, refreshToken, profile, done) {
     process.nextTick(function() {
@@ -98,17 +111,20 @@ var ensureAuthenticated = function(req, res, next) {
 passport.serializeUser(function(user, done) {
   console.log('Serializing user');
   console.log(user);
-  done(null, {name:user.name, id:user._id});
+  done(null, {
+    name: user.name,
+    id: user._id
+  });
 });
 passport.deserializeUser(function(obj, done) {
-   done(null, obj);
+  done(null, obj);
 });
 
 // routes
 app.get('/', ensureAuthenticated, cheeprs.home);
 
 app.get('/login', authrs.login);
-app.post('/logout', function(req, res){
+app.post('/logout', function(req, res) {
   req.logout();
   res.redirect('/');
 });

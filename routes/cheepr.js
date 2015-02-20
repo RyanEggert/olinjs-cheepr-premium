@@ -44,7 +44,7 @@ cheeprroutes.home = home;
 // new cheep @ /cheep/new/
 var makenewcheep = function(req, res) {
   var in_text = req.body.words;
-  var in_name = req.session.user;
+  var in_name = req.user.name;
   //make new cheep in db
   var newCheep = new Cheep({
     words: in_text,
